@@ -1,34 +1,25 @@
-def threeSum(nums):
-    if len(nums) <= 2:
-        return []
-
-    nums.sort()
-    sol_set = []
-
-    for i, num in enumerate(nums):
-
-        if i > 0 and num == nums[i - 1]:
-            continue
-
-        l, r = i + 1, len(nums) - 1
-        while l < r:
-
-            threeSum = nums[l] + num + nums[r]
-
-            if threeSum == 0:
-                sol_set.append([nums[l], num, nums[r]])
-                l += 1
-                while nums[l] == nums[l - 1] and l < r:
-                    l += 1
-
-            elif threeSum < 0:
-                l += 1
-
-            else:
-                r -= 1
-
-    return sol_set
+import tensorflow as tf
 
 
-l = [-1,0,1,2,-1,-4]
-threeSum(l)
+def model1():
+    input_layer = tf.keras.layers.Input(shape=(512, 1024, 3))
+    x = tf.keras.layers.Conv2D(filters=1, kernel_size=(256, 128),
+                               activation="relu", strides=(1, 4))(input_layer)
+    x = tf.keras.layers.Conv2D(filters=2, kernel_size=(128, 64),
+                               activation="relu", strides=(1, 4))(x)
+    x = tf.keras.layers.Conv2D(filters=4, kernel_size=(64, 32),
+                               activation="relu", strides=(1, 4))(x)
+    x = tf.keras.layers.Conv2D(filters=8, kernel_size=(32, 16),
+                               activation="relu", strides=(1, 4))(x)
+    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.Dense(1024, activation="relu")(x)
+    output_layer = tf.keras.layers.Dense(10)(x)
+
+    model = tf.keras.Model(input_layer, output_layer)
+
+    model.compile(optimizer="adam", loss=tf.keras.losses.SparseCategoricalCrossentropy)
+
+    return model
+
+
+m = model1()
